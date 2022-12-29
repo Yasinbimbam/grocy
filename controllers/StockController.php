@@ -123,6 +123,7 @@ class StockController extends BaseController
 	public function ProductBarcodesEditForm(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response, array $args)
 	{
 		$product = null;
+
 		if (isset($request->getQueryParams()['product']))
 		{
 			$product = $this->getDatabase()->products($request->getQueryParams()['product']);
@@ -163,7 +164,6 @@ class StockController extends BaseController
 				'barcodes' => $this->getDatabase()->product_barcodes()->orderBy('barcode'),
 				'quantityunits' => $this->getDatabase()->quantity_units()->orderBy('name', 'COLLATE NOCASE'),
 				'quantityunitsStock' => $this->getDatabase()->quantity_units()->orderBy('name', 'COLLATE NOCASE'),
-				'referencedQuantityunits' => $this->getDatabase()->quantity_units()->orderBy('name', 'COLLATE NOCASE'),
 				'shoppinglocations' => $this->getDatabase()->shopping_locations()->orderBy('name', 'COLLATE NOCASE'),
 				'productgroups' => $this->getDatabase()->product_groups()->orderBy('name', 'COLLATE NOCASE'),
 				'userfields' => $this->getUserfieldsService()->GetFields('products'),
@@ -182,14 +182,13 @@ class StockController extends BaseController
 				'barcodes' => $this->getDatabase()->product_barcodes()->orderBy('barcode'),
 				'quantityunits' => $this->getDatabase()->quantity_units()->orderBy('name', 'COLLATE NOCASE'),
 				'quantityunitsStock' => $this->getDatabase()->quantity_units()->where('id IN (SELECT to_qu_id FROM quantity_unit_conversions_resolved WHERE product_id = :1) OR NOT EXISTS(SELECT 1 FROM stock_log WHERE product_id = :1)', $product->id)->orderBy('name', 'COLLATE NOCASE'),
-				'referencedQuantityunits' => $this->getDatabase()->quantity_units()->where('id IN (SELECT to_qu_id FROM quantity_unit_conversions_resolved WHERE product_id = :1)', $product->id)->orderBy('name', 'COLLATE NOCASE'),
 				'shoppinglocations' => $this->getDatabase()->shopping_locations()->orderBy('name', 'COLLATE NOCASE'),
 				'productgroups' => $this->getDatabase()->product_groups()->orderBy('name', 'COLLATE NOCASE'),
 				'userfields' => $this->getUserfieldsService()->GetFields('products'),
 				'products' => $this->getDatabase()->products()->where('id != :1 AND parent_product_id IS NULL and active = 1', $product->id)->orderBy('name', 'COLLATE NOCASE'),
 				'isSubProductOfOthers' => $this->getDatabase()->products()->where('parent_product_id = :1', $product->id)->count() !== 0,
 				'mode' => 'edit',
-				'quConversions' => $this->getDatabase()->quantity_unit_conversions()->where('product_id', $product->id),
+				'quConversions' => $this->getDatabase()->quantity_unit_conversions(),
 				'productBarcodeUserfields' => $this->getUserfieldsService()->GetFields('product_barcodes'),
 				'productBarcodeUserfieldValues' => $this->getUserfieldsService()->GetAllValues('product_barcodes')
 			]);
@@ -273,6 +272,7 @@ class StockController extends BaseController
 	public function QuantityUnitConversionEditForm(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response, array $args)
 	{
 		$product = null;
+
 		if (isset($request->getQueryParams()['product']))
 		{
 			$product = $this->getDatabase()->products($request->getQueryParams()['product']);
@@ -354,6 +354,7 @@ class StockController extends BaseController
 	public function ShoppingList(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response, array $args)
 	{
 		$listId = 1;
+
 		if (isset($request->getQueryParams()['list']))
 		{
 			$listId = $request->getQueryParams()['list'];
@@ -369,8 +370,6 @@ class StockController extends BaseController
 			'quantityUnitConversionsResolved' => $this->getDatabase()->quantity_unit_conversions_resolved(),
 			'productUserfields' => $this->getUserfieldsService()->GetFields('products'),
 			'productUserfieldValues' => $this->getUserfieldsService()->GetAllValues('products'),
-			'productGroupUserfields' => $this->getUserfieldsService()->GetFields('product_groups'),
-			'productGroupUserfieldValues' => $this->getUserfieldsService()->GetAllValues('product_groups'),
 			'userfields' => $this->getUserfieldsService()->GetFields('shopping_list'),
 			'userfieldValues' => $this->getUserfieldsService()->GetAllValues('shopping_list')
 		]);
@@ -505,7 +504,7 @@ class StockController extends BaseController
 			'quantityunits' => $this->getDatabase()->quantity_units()->orderBy('name', 'COLLATE NOCASE'),
 			'locations' => $this->getDatabase()->locations()->orderBy('name', 'COLLATE NOCASE'),
 			'shoppinglocations' => $this->getDatabase()->shopping_locations()->orderBy('name', 'COLLATE NOCASE'),
-			'stockEntries' => $this->getDatabase()->uihelper_stock_entries()->orderBy('product_id'),
+			'stockEntries' => $this->getDatabase()->stock()->orderBy('product_id'),
 			'currentStockLocations' => $this->getStockService()->GetCurrentStockLocations(),
 			'nextXDays' => $nextXDays,
 			'userfieldsProducts' => $this->getUserfieldsService()->GetFields('products'),
@@ -548,26 +547,6 @@ class StockController extends BaseController
 			'products' => $this->getDatabase()->products()->where('active = 1')->orderBy('name', 'COLLATE NOCASE'),
 			'users' => $usersService->GetUsersAsDto(),
 			'transactionTypes' => GetClassConstants('\Grocy\Services\StockService', 'TRANSACTION_TYPE_')
-		]);
-	}
-
-	public function QuantityUnitConversionsResolved(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response, array $args)
-	{
-		$product = null;
-		if (isset($request->getQueryParams()['product']))
-		{
-			$product = $this->getDatabase()->products($request->getQueryParams()['product']);
-			$quantityUnitConversionsResolved = $this->getDatabase()->quantity_unit_conversions_resolved()->where('product_id', $product->id);
-		}
-		else
-		{
-			$quantityUnitConversionsResolved = $this->getDatabase()->quantity_unit_conversions_resolved()->where('product_id IS NULL');
-		}
-
-		return $this->renderPage($response, 'quantityunitconversionsresolved', [
-			'product' => $product,
-			'quantityUnits' => $this->getDatabase()->quantity_units()->orderBy('name', 'COLLATE NOCASE'),
-			'quantityUnitConversionsResolved' => $quantityUnitConversionsResolved
 		]);
 	}
 }

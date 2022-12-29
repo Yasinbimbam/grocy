@@ -26,14 +26,7 @@ class BatteriesService extends BaseService
 
 	public function GetCurrent()
 	{
-		$batteries = $this->getDatabase()->batteries()->where('active = 1')->orderBy('name', 'COLLATE NOCASE');
-		$currentBatteries = $this->getDatabase()->batteries_current();
-		foreach ($currentBatteries as $currentBattery)
-		{
-			$currentBattery->battery = FindObjectInArrayByPropertyValue($batteries, 'id', $currentBattery->battery_id);
-		}
-
-		return $currentBatteries;
+		return $this->getDatabase()->batteries_current();
 	}
 
 	public function TrackChargeCycle(int $batteryId, string $trackedTime)

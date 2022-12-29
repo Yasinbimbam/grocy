@@ -395,7 +395,7 @@
 					id="qu_id_purchase"
 					name="qu_id_purchase">
 					<option></option>
-					@foreach($referencedQuantityunits as $quantityunit)
+					@foreach($quantityunits as $quantityunit)
 					<option @if($mode=='edit'
 						&&
 						$quantityunit->id == $product->qu_id_purchase) selected="selected" @endif value="{{ $quantityunit->id }}">{{ $quantityunit->name }}</option>
@@ -403,26 +403,18 @@
 				</select>
 				<div class="invalid-feedback">{{ $__t('A quantity unit is required') }}</div>
 			</div>
-			
-			<div class="form-group">
-				<label for="qu_id_consume">{{ $__t('Default quantity unit consume') }}</label>
-				<i class="fa-solid fa-question-circle text-muted"
-					data-toggle="tooltip"
-					data-trigger="hover click"
-					title="{{ $__t('This is the default quantity unit used when consuming this product') }}"></i>
-				<select required
-					class="custom-control custom-select input-group-qu"
-					id="qu_id_consume"
-					name="qu_id_consume">
-					<option></option>
-					@foreach($referencedQuantityunits as $quantityunit)
-					<option @if($mode=='edit'
-						&&
-						$quantityunit->id == $product->qu_id_consume) selected="selected" @endif value="{{ $quantityunit->id }}">{{ $quantityunit->name }}</option>
-					@endforeach
-				</select>
-				<div class="invalid-feedback">{{ $__t('A quantity unit is required') }}</div>
-			</div>
+
+			@php if($mode == 'edit') { $value = $product->qu_factor_purchase_to_stock; } else { $value = 1; } @endphp
+			@include('components.numberpicker', array(
+			'id' => 'qu_factor_purchase_to_stock',
+			'label' => 'Factor purchase to stock quantity unit',
+			'min' => $DEFAULT_MIN_AMOUNT,
+			'decimals' => $userSettings['stock_decimal_places_amounts'],
+			'value' => $value,
+			'additionalCssClasses' => 'input-group-qu locale-number-input locale-number-quantity-amount',
+			'additionalHtmlElements' => '<p id="qu-conversion-info"
+				class="form-text text-info d-none"></p>'
+			))
 
 			<div class="form-group mb-1">
 				<div class="custom-control custom-checkbox">
@@ -587,7 +579,7 @@
 					@if($mode == "edit")
 					<div class="related-links collapse d-md-flex order-2 width-xs-sm-100"
 						id="related-links">
-						<a class="btn btn-primary btn-sm m-1 mt-md-0 mb-md-0 float-right show-as-dialog-link"
+						<a class="btn btn-outline-primary btn-sm m-1 mt-md-0 mb-md-0 float-right show-as-dialog-link"
 							href="{{ $U('/productbarcodes/new?embedded&product=' . $product->id ) }}">
 							{{ $__t('Add') }}
 						</a>
@@ -714,7 +706,7 @@
 			<div class="col">
 				<div class="title-related-links">
 					<h4>
-						{{ $__t('Product specifc QU conversions') }}
+						{{ $__t('QU conversions') }}
 					</h4>
 					<button class="btn btn-outline-dark d-md-none mt-2 float-right order-1 order-md-3"
 						type="button"
@@ -725,19 +717,16 @@
 					@if($mode == "edit")
 					<div class="related-links collapse d-md-flex order-2 width-xs-sm-100"
 						id="related-links">
-						<a class="btn btn-primary btn-sm m-1 mt-md-0 mb-md-0 float-right show-as-dialog-link"
+						<a class="btn btn-outline-primary btn-sm m-1 mt-md-0 mb-md-0 float-right show-as-dialog-link"
 							href="{{ $U('/quantityunitconversion/new?embedded&product=' . $product->id ) }}">
 							{{ $__t('Add') }}
-						</a>
-						<a class="btn btn-outline-primary btn-sm m-1 mt-md-0 mb-md-0 float-right show-as-dialog-link"
-							href="{{ $U('/quantityunitconversionsresolved?embedded&product=' . $product->id ) }}"
-							data-toggle="tooltip"
-							title="{{ $__t('This shows all to this product directly or indirectly related quantity units and their derived conversion factors') }}">
-							{{ $__t('Show resolved conversions') }}
 						</a>
 					</div>
 					@endif
 				</div>
+
+				<h5 id="qu-conversion-headline-info"
+					class="text-muted font-italic"></h5>
 
 				<table id="qu-conversions-table-products"
 					class="table table-sm table-striped nowrap w-100">
@@ -752,12 +741,14 @@
 							<th class="allow-grouping">{{ $__t('Quantity unit from') }}</th>
 							<th class="allow-grouping">{{ $__t('Quantity unit to') }}</th>
 							<th>{{ $__t('Factor') }}</th>
+							<th class="allow-grouping">{{ $__t('Group')}}</th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody class="d-none">
 						@if($mode == "edit")
 						@foreach($quConversions as $quConversion)
+						@if($quConversion->product_id == $product->id || $quConversion->product_id == null && ($quConversion->product_id != null || $quConversion->from_qu_id == $product->qu_id_purchase || $quConversion->from_qu_id == $product->qu_id_stock || $quConversion->to_qu_id == $product->qu_id_purchase || $quConversion->to_qu_id == $product->qu_id_stock))
 						<tr>
 							<td class="fit-content border-right">
 								<a class="btn btn-sm btn-info show-as-dialog-link @if($quConversion->product_id == null) disabled @endif"
@@ -779,10 +770,18 @@
 							<td>
 								<span class="locale-number locale-number-quantity-amount">{{ $quConversion->factor }}</span>
 							</td>
+							<td class="d-none">
+								@if($quConversion->product_id != null)
+								{{ $__t('Product overrides') }}
+								@else
+								{{ $__t('Default conversions') }}
+								@endif
+							</td>
 							<td class="font-italic">
 								{!! $__t('This means 1 %1$s is the same as %2$s %3$s', FindObjectInArrayByPropertyValue($quantityunits, 'id', $quConversion->from_qu_id)->name, '<span class="locale-number locale-number-quantity-amount">' . $quConversion->factor . '</span>', $__n($quConversion->factor, FindObjectInArrayByPropertyValue($quantityunits, 'id', $quConversion->to_qu_id)->name, FindObjectInArrayByPropertyValue($quantityunits, 'id', $quConversion->to_qu_id)->name_plural, true)) !!}
 							</td>
 						</tr>
+						@endif
 						@endforeach
 						@endif
 					</tbody>

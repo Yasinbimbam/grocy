@@ -4437,6 +4437,9 @@
 					"product_group_id": {
 						"type": "integer"
 					},
+					"qu_factor_purchase_to_stock": {
+						"type": "number"
+					},
 					"tare_weight": {
 						"type": "number"
 					},
@@ -4492,6 +4495,7 @@
 					"location_id": "4",
 					"qu_id_purchase": "3",
 					"qu_id_stock": "3",
+					"qu_factor_purchase_to_stock": "1.0",
 					"min_stock_amount": "8",
 					"default_best_before_days": "0",
 					"row_created_timestamp": "2019-05-02 20:12:26",
@@ -4732,13 +4736,10 @@
 					"product_barcodes": {
 						"$ref": "#/components/schemas/ProductBarcode"
 					},
-					"quantity_unit_stock": {
-						"$ref": "#/components/schemas/QuantityUnit"
-					},
 					"default_quantity_unit_purchase": {
 						"$ref": "#/components/schemas/QuantityUnit"
 					},
-					"default_quantity_unit_consume": {
+					"quantity_unit_stock": {
 						"$ref": "#/components/schemas/QuantityUnit"
 					},
 					"last_purchased": {
@@ -4794,10 +4795,6 @@
 					},
 					"default_location": {
 						"$ref": "#/components/schemas/Location"
-					},
-					"qu_conversion_factor_purchase_to_stock": {
-						"type": "number",
-						"description": "The conversion factor of the corresponding QU conversion from the product's qu_id_purchase to qu_id_stock"
 					}
 				},
 				"example": {
@@ -4808,6 +4805,7 @@
 						"location_id": "4",
 						"qu_id_purchase": "3",
 						"qu_id_stock": "3",
+						"qu_factor_purchase_to_stock": "1.0",
 						"min_stock_amount": "8",
 						"default_best_before_days": "0",
 						"row_created_timestamp": "2019-05-02 20:12:26",
@@ -5781,8 +5779,7 @@
 					"chores_log",
 					"meal_plan_sections",
 					"products_last_purchased",
-					"products_average_price",
-					"quantity_unit_conversions_resolved"
+					"products_average_price"
 				]
 			},
 			"ExposedEntityNoListing": {
@@ -5800,8 +5797,7 @@
 					"stock_current_locations",
 					"chores_log",
 					"products_last_purchased",
-					"products_average_price",
-					"quantity_unit_conversions_resolved"
+					"products_average_price"
 				]
 			},
 			"ExposedEntityNoDelete": {
@@ -5812,8 +5808,7 @@
 					"stock_current_locations",
 					"chores_log",
 					"products_last_purchased",
-					"products_average_price",
-					"quantity_unit_conversions_resolved"
+					"products_average_price"
 				]
 			},
 			"ExposedEntityEditRequiresAdmin": {

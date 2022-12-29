@@ -407,7 +407,7 @@ class StockService extends BaseService
 			}
 
 			$productStockAmount = floatval($productDetails->stock_amount_aggregated);
-			if (round($amount, 2) > round($productStockAmount, 2))
+			if ($amount > $productStockAmount)
 			{
 				throw new \Exception('Amount to be consumed cannot be > current stock amount (if supplied, at the desired location)');
 			}
@@ -460,13 +460,6 @@ class StockService extends BaseService
 					$stockEntry->delete();
 
 					$amount -= $stockEntry->amount;
-
-					if ($allowSubproductSubstitution && $stockEntry->product_id != $productId && $conversion != null)
-					{
-						// A sub product with QU conversions was used
-						// => Convert the rest amount back to be based on the original (parent) product for the next round
-						$amount = $amount / floatval($conversion->factor);
-					}
 				}
 				else
 				{
@@ -600,25 +593,13 @@ class StockService extends BaseService
 			{
 				// Add product to database and include new product id in output
 				$productData = $pluginOutput;
-				unset($productData['barcode'], $productData['qu_factor_purchase_to_stock']);
-
+				unset($productData['barcode']);
 				$newProductRow = $this->getDatabase()->products()->createRow($productData);
 				$newProductRow->save();
-
 				$this->getDatabase()->product_barcodes()->createRow([
 					'product_id' => $newProductRow->id,
 					'barcode' => $pluginOutput['barcode']
 				])->save();
-
-				if ($pluginOutput['qu_id_stock'] != $pluginOutput['qu_id_purchase'])
-				{
-					$this->getDatabase()->quantity_unit_conversions()->createRow([
-						'product_id' => $newProductRow->id,
-						'from_qu_id' => $pluginOutput['qu_id_purchase'],
-						'to_qu_id' => $pluginOutput['qu_id_stock'],
-						'factor' => $pluginOutput['qu_factor_purchase_to_stock'],
-					])->save();
-				}
 
 				$pluginOutput['id'] = $newProductRow->id;
 			}
@@ -747,7 +728,6 @@ class StockService extends BaseService
 		$nextDueDate = $this->getDatabase()->stock()->where('product_id', $productId)->min('best_before_date');
 		$quPurchase = $this->getDatabase()->quantity_units($product->qu_id_purchase);
 		$quStock = $this->getDatabase()->quantity_units($product->qu_id_stock);
-		$quConsume = $this->getDatabase()->quantity_units($product->qu_id_consume);
 		$location = $this->getDatabase()->locations($product->location_id);
 		$averageShelfLifeDays = intval($this->getDatabase()->stock_average_product_shelf_life()->where('id', $productId)->fetch()->average_shelf_life_days);
 		$currentPrice = $this->getDatabase()->products_current_price()->where('product_id', $productId)->fetch()->price;
@@ -766,16 +746,6 @@ class StockService extends BaseService
 			$defaultConsumeLocation = $this->getDatabase()->locations($product->default_consume_location_id);
 		}
 
-		$quConversionFactorPurchaseToStock = 1.0;
-		if ($product->qu_id_stock != $product->qu_id_purchase)
-		{
-			$conversion = $this->getDatabase()->quantity_unit_conversions()->where('product_id = :1 AND from_qu_id = :2 AND to_qu_id = :3', $product->id, $product->qu_id_purchase, $product->qu_id_stock)->fetch();
-			if ($conversion != null)
-			{
-				$quConversionFactorPurchaseToStock = $conversion->factor;
-			}
-		}
-
 		return [
 			'product' => $product,
 			'product_barcodes' => $productBarcodes,
@@ -786,9 +756,8 @@ class StockService extends BaseService
 			'stock_amount_opened' => $stockCurrentRow->amount_opened,
 			'stock_amount_aggregated' => $stockCurrentRow->amount_aggregated,
 			'stock_amount_opened_aggregated' => $stockCurrentRow->amount_opened_aggregated,
-			'quantity_unit_stock' => $quStock,
 			'default_quantity_unit_purchase' => $quPurchase,
-			'default_quantity_unit_consume' => $quConsume,
+			'quantity_unit_stock' => $quStock,
 			'last_price' => $lastPrice,
 			'avg_price' => $avgPrice,
 			'oldest_price' => $currentPrice, // Deprecated
@@ -801,8 +770,7 @@ class StockService extends BaseService
 			'spoil_rate_percent' => $spoilRate,
 			'is_aggregated_amount' => $stockCurrentRow->is_aggregated_amount,
 			'has_childs' => $this->getDatabase()->products()->where('parent_product_id = :1', $product->id)->count() !== 0,
-			'default_consume_location' => $defaultConsumeLocation,
-			'qu_conversion_factor_purchase_to_stock' => $quConversionFactorPurchaseToStock
+			'default_consume_location' => $defaultConsumeLocation
 		];
 	}
 

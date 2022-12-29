@@ -92,18 +92,11 @@
 					href="{{ $U('/shoppinglistitem/new?embedded&list=' . $selectedShoppingListId) }}">
 					{{ $__t('Add item') }}
 				</a>
-				<div class="btn-group">
-					<a id="clear-shopping-list"
-						class="btn btn-outline-danger btn-sm mb-1 responsive-button @if($listItems->count() == 0) disabled @endif"
-						href="#">
-						{{ $__t('Clear list') }}
-					</a>
-					<a id="clear-done-items"
-						class="btn btn-outline-danger btn-sm mb-1 responsive-button @if($listItems->count() == 0) disabled @endif"
-						href="#">
-						{{ $__t('Clear done items') }}
-					</a>
-				</div>
+				<a id="clear-shopping-list"
+					class="btn btn-outline-danger btn-sm mb-1 responsive-button @if($listItems->count() == 0) disabled @endif"
+					href="#">
+					{{ $__t('Clear list') }}
+				</a>
 				<a id="add-all-items-to-stock-button"
 					class="btn btn-outline-primary btn-sm mb-1 responsive-button @if(!GROCY_FEATURE_FLAG_STOCK) d-none @endif"
 					href="#">
@@ -235,7 +228,7 @@
 					</td>
 					<td class="product-name-cell cursor-link"
 						data-product-id="{{ $listItem->product_id }}">
-						@if(!empty($listItem->product_id)) {{ $listItem->product_name }}<br>@endif<em>{!! nl2br($listItem->note ?? '') !!}</em>
+						@if(!empty($listItem->product_id)) {{ $listItem->product_name }}<br>@endif<em>{!! nl2br($listItem->note) !!}</em>
 					</td>
 					@if(!empty($listItem->product_id))
 					@php
@@ -376,16 +369,14 @@
 						@include('components.userfields_thead', array(
 						'userfields' => $productUserfields
 						))
-						@include('components.userfields_thead', array(
-						'userfields' => $productGroupUserfields
-						))
+
 					</tr>
 				</thead>
 				<tbody>
 					@foreach($listItems as $listItem)
 					<tr>
 						<td>
-							@if(!empty($listItem->product_id)) {{ $listItem->product_name }}<br>@endif<em>{!! nl2br($listItem->note ?? '') !!}</em>
+							@if(!empty($listItem->product_id)) {{ $listItem->product_name }}<br>@endif<em>{!! nl2br($listItem->note) !!}</em>
 						</td>
 						<td>
 							<span class="locale-number locale-number-quantity-amount">{{ $listItem->amount }}</span> @if(!empty($listItem->product_id)){{ $__n($listItem->amount, $listItem->qu_name, $listItem->qu_name_plural, true) }}@endif
@@ -402,10 +393,6 @@
 						'userfields' => $productUserfields,
 						'userfieldValues' => FindAllObjectsInArrayByPropertyValue($productUserfieldValues, 'object_id', $listItem->product_id)
 						))
-						@include('components.userfields_tbody', array(
-						'userfields' => $productGroupUserfields,
-						'userfieldValues' => FindAllObjectsInArrayByPropertyValue($productGroupUserfieldValues, 'object_id', $listItem->product_group_id)
-						))
 
 					</tr>
 					@endforeach
@@ -417,7 +404,7 @@
 		@foreach($listItems as $listItem)
 		<div class="py-0">
 			<span class="locale-number locale-number-quantity-amount">{{ $listItem->amount }}</span> @if(!empty($listItem->product_id)){{ $__n($listItem->amount, $listItem->qu_name, $listItem->qu_name_plural, true) }}@endif
-			@if(!empty($listItem->product_id)) {{ $listItem->product_name }}<br>@endif<em>{!! nl2br($listItem->note ?? '') !!}</em>
+			@if(!empty($listItem->product_id)) {{ $listItem->product_name }}<br>@endif<em>{!! nl2br($listItem->note) !!}</em>
 		</div><br>
 		@endforeach
 	</div>

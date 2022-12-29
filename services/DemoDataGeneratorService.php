@@ -65,8 +65,6 @@ class DemoDataGeneratorService extends BaseService
 				INSERT INTO quantity_units (id, name, name_plural) VALUES (11, '{$this->__n_sql(1, 'Milliliter', 'Milliliters')}', '{$this->__n_sql(2, 'Milliliter', 'Milliliters')}'); --11
 				DELETE FROM quantity_units WHERE name = '{$this->__t_sql('Slice')}';
 				INSERT INTO quantity_units (id, name, name_plural) VALUES (12, '{$this->__n_sql(1, 'Slice', 'Slices')}', '{$this->__n_sql(2, 'Slice', 'Slices')}'); --12
-				DELETE FROM quantity_units WHERE name = '{$this->__t_sql('Kilogram')}';
-				INSERT INTO quantity_units (id, name, name_plural) VALUES (13, '{$this->__n_sql(1, 'Kilogram', 'Kilograms')}', '{$this->__n_sql(2, 'Kilogram', 'Kilograms')}'); --13
 
 				INSERT INTO product_groups(name) VALUES ('01 {$this->__t_sql('Sweets')}'); --1
 				INSERT INTO product_groups(name) VALUES ('02 {$this->__t_sql('Bakery products')}'); --2
@@ -76,32 +74,32 @@ class DemoDataGeneratorService extends BaseService
 				INSERT INTO product_groups(name) VALUES ('06 {$this->__t_sql('Refrigerated products')}'); --6
 
 				DELETE FROM sqlite_sequence WHERE name = 'products'; --Just to keep IDs in order as mentioned here...
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, min_stock_amount, product_group_id, picture_file_name) VALUES ('{$this->__t_sql('Cookies')}', 4, 3, 3, 8, 1, 'cookies.jpg'); --1
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, min_stock_amount, product_group_id, cumulate_min_stock_amount_of_sub_products) VALUES ('{$this->__t_sql('Chocolate')}', 4, 3, 3, 8, 1, 1); --2
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, min_stock_amount, product_group_id, picture_file_name) VALUES ('{$this->__t_sql('Gummy bears')}', 4, 3, 3, 8, 1, 'gummybears.jpg'); --3
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, min_stock_amount, product_group_id) VALUES ('{$this->__t_sql('Crisps')}', 4, 3, 3, 10, 1); --4
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Eggs')}', 2, 3, 2, 5); --5
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Noodles')}', 3, 3, 3, 6); --6
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Pickles')}', 5, 4, 4, 3); --7
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Gulash soup')}', 5, 5, 5, 3); --8
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Yogurt')}', 2, 6, 6, 6); --9
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Cheese')}', 2, 3, 3, 6); --10
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, description) VALUES ('{$this->__t_sql('Cold cuts')}', 2, 3, 3, 6, '{$loremIpsum}'); --11
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, picture_file_name, default_best_before_days) VALUES ('{$this->__t_sql('Paprika')}', 2, 2, 2, 5, 'paprika.jpg', 7); --12
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, picture_file_name, default_best_before_days) VALUES ('{$this->__t_sql('Cucumber')}', 2, 2, 2, 5, 'cucumber.jpg', 7); --13
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, default_best_before_days) VALUES ('{$this->__t_sql('Radish')}', 2, 7, 7, 5, 7); --14
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, picture_file_name, default_best_before_days) VALUES ('{$this->__t_sql('Tomato')}', 2, 2, 2, 5, 'tomato.jpg', 7); --15
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Pizza dough')}', 2, 3, 3, 6); --16
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Sieved tomatoes')}', 5, 5, 5, 3); --17
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Salami')}', 2, 3, 3, 6); --18
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Toast')}', 3, 5, 5, 2); --19
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, default_best_before_days_after_freezing, default_best_before_days_after_thawing, due_type) VALUES ('{$this->__t_sql('Minced meat')}', 2, 3, 3, 4, 180, 2, 2); --20
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, enable_tare_weight_handling, tare_weight, calories) VALUES ('{$this->__t_sql('Flour')}', 3, 8, 8, 3, 1, 500, 2); --21
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, calories) VALUES ('{$this->__t_sql('Sugar')}', 3, 3, 3, 3, 3870); --22
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, calories) VALUES ('{$this->__t_sql('Milk')}', 2, 10, 10, 6, 418); --23
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, parent_product_id) VALUES ('{$this->__t_sql('Milk Chocolate')}', 4, 3, 3, 1, 2); --24
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id, parent_product_id) VALUES ('{$this->__t_sql('Dark Chocolate')}', 4, 3, 3, 1, 2); --25
-				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, product_group_id) VALUES ('{$this->__t_sql('Waffle rolls')}', 4, 3, 3, 1); --26
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, min_stock_amount, product_group_id, picture_file_name) VALUES ('{$this->__t_sql('Cookies')}', 4, 3, 3, 1, 8, 1, 'cookies.jpg'); --1
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, min_stock_amount, product_group_id, cumulate_min_stock_amount_of_sub_products) VALUES ('{$this->__t_sql('Chocolate')}', 4, 3, 3, 1, 8, 1, 1); --2
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, min_stock_amount, product_group_id, picture_file_name) VALUES ('{$this->__t_sql('Gummy bears')}', 4, 3, 3, 1, 8, 1, 'gummybears.jpg'); --3
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, min_stock_amount, product_group_id) VALUES ('{$this->__t_sql('Crisps')}', 4, 3, 3, 1, 10, 1); --4
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Eggs')}', 2, 3, 2, 10, 5); --5
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Noodles')}', 3, 3, 3, 1, 6); --6
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Pickles')}', 5, 4, 4, 1, 3); --7
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Gulash soup')}', 5, 5, 5, 1, 3); --8
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Yogurt')}', 2, 6, 6, 1, 6); --9
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Cheese')}', 2, 3, 3, 1, 6); --10
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, description) VALUES ('{$this->__t_sql('Cold cuts')}', 2, 3, 3, 1, 6, '{$loremIpsum}'); --11
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, picture_file_name, default_best_before_days) VALUES ('{$this->__t_sql('Paprika')}', 2, 2, 2, 1, 5, 'paprika.jpg', 7); --12
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, picture_file_name, default_best_before_days) VALUES ('{$this->__t_sql('Cucumber')}', 2, 2, 2, 1, 5, 'cucumber.jpg', 7); --13
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, default_best_before_days) VALUES ('{$this->__t_sql('Radish')}', 2, 7, 7, 1, 5, 7); --14
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, picture_file_name, default_best_before_days) VALUES ('{$this->__t_sql('Tomato')}', 2, 2, 2, 1, 5, 'tomato.jpg', 7); --15
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Pizza dough')}', 2, 3, 3, 1, 6); --16
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Sieved tomatoes')}', 5, 5, 5, 1, 3); --17
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Salami')}', 2, 3, 3, 1, 6); --18
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Toast')}', 3, 5, 5, 1, 2); --19
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, default_best_before_days_after_freezing, default_best_before_days_after_thawing, due_type) VALUES ('{$this->__t_sql('Minced meat')}', 2, 3, 3, 1, 4, 180, 2, 2); --20
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, enable_tare_weight_handling, tare_weight, calories) VALUES ('{$this->__t_sql('Flour')}', 3, 8, 8, 1, 3, 1, 500, 2); --21
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, calories) VALUES ('{$this->__t_sql('Sugar')}', 3, 3, 3, 1, 3, 3870); --22
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, calories) VALUES ('{$this->__t_sql('Milk')}', 2, 10, 10, 1, 6, 418); --23
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, parent_product_id) VALUES ('{$this->__t_sql('Milk Chocolate')}', 4, 3, 3, 1, 1, 2); --24
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id, parent_product_id) VALUES ('{$this->__t_sql('Dark Chocolate')}', 4, 3, 3, 1, 1, 2); --25
+				INSERT INTO products (name, location_id, qu_id_purchase, qu_id_stock, qu_factor_purchase_to_stock, product_group_id) VALUES ('{$this->__t_sql('Waffle rolls')}', 4, 3, 3, 1, 1); --26
 				UPDATE products SET calories = 123 WHERE IFNULL(calories, 0) = 0;
 
 				INSERT INTO product_barcodes (product_id, barcode) VALUES (8, '22111968');
@@ -114,12 +112,6 @@ class DemoDataGeneratorService extends BaseService
 
 				INSERT INTO quantity_unit_conversions (from_qu_id, to_qu_id, factor, product_id) VALUES (3, 12, 10, 10);
 				INSERT INTO quantity_unit_conversions (from_qu_id, to_qu_id, factor, product_id) VALUES (3, 8, 1000, 22);
-				INSERT INTO quantity_unit_conversions (from_qu_id, to_qu_id, factor, product_id) VALUES (10, 9, 1, 23);
-				INSERT INTO quantity_unit_conversions (from_qu_id, to_qu_id, factor, product_id) VALUES (3, 8, 500, 6);
-				INSERT INTO quantity_unit_conversions (from_qu_id, to_qu_id, factor, product_id) VALUES (3, 8, 200, 18);
-				INSERT INTO quantity_unit_conversions (from_qu_id, to_qu_id, factor) VALUES (13, 8, 1000);
-				INSERT INTO quantity_unit_conversions (from_qu_id, to_qu_id, factor) VALUES (9, 11, 1000);
-				UPDATE quantity_unit_conversions SET factor = 10 WHERE product_id = 5 AND from_qu_id = 3 AND to_qu_id = 2;
 
 				INSERT INTO shopping_list (note, amount) VALUES ('{$this->__t_sql('Some good snacks')}', 1);
 				INSERT INTO shopping_list (product_id, amount) VALUES (20, 1);

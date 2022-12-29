@@ -106,7 +106,7 @@
 						$("#display_amount").removeAttr("max");
 						if (BoolVal(Grocy.UserSettings.stock_default_consume_amount_use_quick_consume_amount))
 						{
-							$('#display_amount').val(productDetails.product.quick_consume_amount * $("#qu_id option:selected").attr("data-qu-factor"));
+							$('#display_amount').val(productDetails.product.quick_consume_amount);
 						}
 						else
 						{
@@ -196,7 +196,7 @@ $('#save-mark-as-open-button').on('click', function(e)
 
 					if (BoolVal(Grocy.UserSettings.stock_default_consume_amount_use_quick_consume_amount))
 					{
-						$('#display_amount').val(productDetails.product.quick_consume_amount * $("#qu_id option:selected").attr("data-qu-factor"));
+						$('#display_amount').val(productDetails.product.quick_consume_amount);
 					}
 					else
 					{
@@ -365,10 +365,10 @@ Grocy.Components.ProductPicker.GetPicker().on('change', function(e)
 				current_productDetails = productDetails;
 
 				Grocy.Components.ProductAmountPicker.Reload(productDetails.product.id, productDetails.quantity_unit_stock.id);
-				Grocy.Components.ProductAmountPicker.SetQuantityUnit(productDetails.default_quantity_unit_consume.id);
+				Grocy.Components.ProductAmountPicker.SetQuantityUnit(productDetails.quantity_unit_stock.id);
 				if (BoolVal(Grocy.UserSettings.stock_default_consume_amount_use_quick_consume_amount))
 				{
-					$('#display_amount').val(productDetails.product.quick_consume_amount * $("#qu_id option:selected").attr("data-qu-factor"));
+					$('#display_amount').val(productDetails.product.quick_consume_amount);
 				}
 				else
 				{
@@ -378,7 +378,7 @@ Grocy.Components.ProductPicker.GetPicker().on('change', function(e)
 				$(".input-group-productamountpicker").trigger("change");
 
 				var defaultLocationId = productDetails.location.id;
-				if ((productDetails.product.default_consume_location_id || "").isEmpty())
+				if (productDetails.product.default_consume_location_id != null && !productDetails.product.default_consume_location_id.isEmpty())
 				{
 					defaultLocationId = productDetails.product.default_consume_location_id;
 				}
@@ -434,13 +434,13 @@ Grocy.Components.ProductPicker.GetPicker().on('change', function(e)
 
 										if (barcode != null)
 										{
-											if (barcode.amount != null)
+											if (barcode.amount != null && !barcode.amount.isEmpty())
 											{
 												$("#display_amount").val(barcode.amount);
 												$("#display_amount").select();
 											}
 
-											if (barcode.qu_id != null)
+											if (barcode.qu_id != null && !barcode.qu_id.isEmpty())
 											{
 												Grocy.Components.ProductAmountPicker.SetQuantityUnit(barcode.qu_id);
 											}

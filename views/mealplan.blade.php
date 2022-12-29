@@ -70,6 +70,7 @@
 			width: 200px !important;
 		}
 	}
+
 </style>
 @endpush
 
@@ -243,7 +244,7 @@
 					</div>
 
 					<div class="form-group">
-						<label for="section_id_note">{{ $__t('Section') }}</label>
+						<label for="period_type">{{ $__t('Section') }}</label>
 						<select class="custom-control custom-select"
 							id="section_id_note"
 							name="section_id_note"

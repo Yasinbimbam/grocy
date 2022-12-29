@@ -1029,7 +1029,6 @@ $(".change-table-columns-visibility-button").on("click", function(e)
 	dataTable.columns().every(function()
 	{
 		var index = this.index();
-		var indexForGrouping = index;
 		var headerCell = $(this.header());
 		var title = headerCell.text();
 		var visible = this.visible();
@@ -1042,7 +1041,7 @@ $(".change-table-columns-visibility-button").on("click", function(e)
 		var shadowColumnIndex = headerCell.attr("data-shadow-rowgroup-column");
 		if (shadowColumnIndex)
 		{
-			indexForGrouping = shadowColumnIndex;
+			index = shadowColumnIndex;
 		}
 
 		var checked = "checked";
@@ -1077,12 +1076,12 @@ $(".change-table-columns-visibility-button").on("click", function(e)
 				<input ' + rowGroupChecked + ' class="custom-control-input change-table-columns-rowgroup-toggle" \
 					type="radio" \
 					name="column-rowgroup" \
-					id="column-rowgroup-' + indexForGrouping.toString() + '" \
+					id="column-rowgroup-' + index.toString() + '" \
 					data-table-selector="' + dataTableSelector + '" \
-					data-column-index="' + indexForGrouping.toString() + '" \
+					data-column-index="' + index.toString() + '" \
 				> \
 				<label class="custom-control-label" \
-					for="column-rowgroup-' + indexForGrouping.toString() + '">' + title + ' \
+					for="column-rowgroup-' + index.toString() + '">' + title + ' \
 				</label > \
 			</div>';
 		}
@@ -1237,8 +1236,3 @@ $(document).on("click", "#clear-filter-button", function(e)
 	// to prevent that the tooltip stays until clicked anywhere else
 	document.activeElement.blur();
 });
-
-$(document).on("shown.bs.modal", function(e)
-{
-	ResizeResponsiveEmbeds();
-})
